@@ -53,13 +53,18 @@ func timeoutWrapper(t *testing.T, mp MakePipe, f connTester) {
 	}
 	var once sync.Once
 	defer once.Do(func() { stop() })
-	timer := time.AfterFunc(time.Minute, func() {
-		once.Do(func() {
-			t.Error("test timed out; terminating pipe")
-			stop()
-		})
-	})
-	defer timer.Stop()
+
+	// The manual timeout below prevents the standard goroutine dump when 'go test' times out. This
+	// dump can be quite helpful in debugging deadlocks, so we comment out the block below.
+
+	// timer := time.AfterFunc(time.Minute, func() {
+	// 	once.Do(func() {
+	// 		t.Error("test timed out; terminating pipe")
+	// 		stop()
+	// 	})
+	// })
+	// defer timer.Stop()
+
 	f(t, c1, c2)
 }
 
